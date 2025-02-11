@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "914175452048",
+    "project_id": "imposter-red-alert",
+    "storage_bucket": "imposter-red-alert.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:914175452048:android:3bffb887528d11861ec915",
+        "android_client_info": {
+          "package_name": "com.twentypercent.ImposterSortPuzzle"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "914175452048-61rf1ekeo85kpke5m4hmkb3vm61uk13m.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.twentypercent.ImposterSortPuzzle",
+            "certificate_hash": "c5808a086c2e5e0f253b1892cf13c1bf2e0cb37d"
+          }
+        },
+        {
+          "client_id": "914175452048-ufdv52i78jht2n1ufg0dlci50gp0bbvf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA4yuOm4lUdKyumPhiuh5UBusDKS131BP4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "914175452048-ufdv52i78jht2n1ufg0dlci50gp0bbvf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
