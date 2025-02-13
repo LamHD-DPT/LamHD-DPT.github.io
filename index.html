@@ -3,194 +3,42 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	<meta
-    name="viewport"
-    content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-	<meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Imposter Red Alert</title>
-	 <style>
-		.mobile-body {
-		  overflow: hidden;
-		  height: 100vh;
-		}
-
-		.mobile-wrap {
-		  position: absolute;
-		  left: 0;
-		  top: 0;
-		  right: 0;
-		  bottom: 0;
-		  overflow-x: hidden;
-		  overflow-y: auto;
-		  background: red;
-		}
-
-		.mobile-content {
-		  height: calc(100% + 1px);
-		  background: green;
-		}
-	</style>
+    <title>Unity WebGL Player | Imposter Red Alert</title>
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
-	<link rel="manifest" href="manifest.webmanifest">
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jsencrypt/3.2.1/jsencrypt.min.js"></script>
-	<script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/tonweb@0.0.60/dist/tonweb.js"></script>
-	<script src="ton-connect.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/eruda/3.4.1/eruda.min.js"></script>
-	<script>eruda.init();</script>
+    <link rel="manifest" href="manifest.webmanifest">
   </head>
-  <body class="dark">
-    <div id="wrap">
-		<div id="content">
-			<div id="unity-container" class="unity-desktop">
-			  <canvas id="unity-canvas"></canvas>
-			</div>
-			<img id="fullscreen-image" src="background.webp" alt="Fullscreen Image">
-			<div id="loading-cover" style="display:none;">
-			  <div id="unity-loading-bar">
-				<div id="unity-logo"><img src="logo.webp"></div>
-				<div id="unity-progress-bar-empty" style="display: none;">
-				  <div id="unity-progress-bar-full"></div>
-				</div>
-				<div class="spinner"></div>
-			  </div>
-			</div>
-			<div id="unity-fullscreen-button" style="display: none;"></div>
-	    </div>
-	</div>
-    <script>
-      const hideFullScreenButton = "";
-      const buildUrl = "Build";
-      const loaderUrl = buildUrl + "/LamHD-DPT.github.io.loader.js?v=1.0.0";
-      const config = {
-        dataUrl: buildUrl + "/LamHD-DPT.github.io.data.unityweb?v=1.0.0",
-        frameworkUrl: buildUrl + "/LamHD-DPT.github.io.framework.js.unityweb?v=1.0.0",
-        codeUrl: buildUrl + "/LamHD-DPT.github.io.wasm.unityweb?v=1.0.0",
-        streamingAssetsUrl: "StreamingAssets",
-        companyName: "echelonstudios",
-        productName: "Imposter Red Alert",
-        productVersion: "1.0.0",
+  <body>
+    <div id="unity-container">
+      <canvas id="unity-canvas" width=1080 height=1920 tabindex="-1"></canvas>
+      <div id="unity-loading-bar">
+        <div id="unity-logo"></div>
+        <div id="unity-progress-bar-empty">
+          <div id="unity-progress-bar-full"></div>
+        </div>
+      </div>
+      <div id="unity-warning"> </div>
+    </div>
+    <script src="index.js"></script>
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+      import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-analytics.js";
+      // https://firebase.google.com/docs/web/setup#available-libraries
+  
+      const firebaseConfig = {
+      apiKey: "AIzaSyAloGQbkklUTJGEx-aLVLQQXn42OwNbJtA",
+      authDomain: "imposter-sort-web.firebaseapp.com",
+      projectId: "imposter-sort-web",
+      storageBucket: "imposter-sort-web.firebasestorage.app",
+      messagingSenderId: "161366118941",
+      appId: "1:161366118941:web:232e82717ac6f4a6f8acf4",
+      measurementId: "G-2KCVPK2JF9"
       };
-	  
-	  config.devicePixelRatio = 2;
-
-      const container = document.querySelector("#unity-container");
-      const canvas = document.querySelector("#unity-canvas");
-      const loadingCover = document.querySelector("#loading-cover");
-      const progressBarEmpty = document.querySelector("#unity-progress-bar-empty");
-      const progressBarFull = document.querySelector("#unity-progress-bar-full");
-      const fullscreenButton = document.querySelector("#unity-fullscreen-button");
-      const spinner = document.querySelector('.spinner');
-	  const unityLogo = document.querySelector("#unity-logo");
-
-      const canFullscreen = (function() {
-        for (const key of [
-            'exitFullscreen',
-            'webkitExitFullscreen',
-            'webkitCancelFullScreen',
-            'mozCancelFullScreen',
-            'msExitFullscreen',
-          ]) {
-          if (key in document) {
-            return true;
-          }
-        }
-        return false;
-      }());
-
-      loadingCover.style.display = "";
-
-      const script = document.createElement("script");
-	  let myUnityInstance;
-	  let tonConnectUI;
-	  
-	  const tonConnectManager = "ton_connect_manager";
-	  const debugLogJs = "debug_log_js";
-	  
-      script.src = loaderUrl;
-      script.onload = () => {
-		  createUnityInstance(canvas, config, (progress) => {
-          spinner.style.display = "none";
-          progressBarEmpty.style.display = "";
-          progressBarFull.style.width = `${100 * progress}%`;
-        }).then((unityInstance) => {
-		  myUnityInstance = unityInstance;
-          unityLogo.style.display = "none";
-          progressBarEmpty.style.display = "none";
-          if (canFullscreen) {
-            if (!hideFullScreenButton) {
-              fullscreenButton.style.display = "";
-            }
-            fullscreenButton.onclick = () => {
-              unityInstance.SetFullscreen(1);
-            };
-          }
-		  InitTonConnect();
-        }).catch((message) => {
-          alert(message);
-        });
-      };
-      document.body.appendChild(script);
-	  
+  
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      const analytics = getAnalytics(app);
+      
     </script>
-	<script src="https://unpkg.com/@tma.js/sdk@2.5.0/dist/index.iife.js"></script>
-	<script>
-	  (function() {
-		var { retrieveLaunchParams, postEvent, onEvent } = window.tmajs.sdk;
-		var lp = retrieveLaunchParams();
-		
-		if (['macos', 'tdesktop', 'weba', 'web', 'webk'].includes(lp.platform)) {
-		  return;
-		}
-		
-		function expandApp() {
-		  postEvent('web_app_expand');
-		  document.body.classList.add('mobile-body');
-		  var wrapElement = document.getElementById('wrap');
-		  var contentElement = document.getElementById('content');
-		  if (wrapElement) wrapElement.classList.add('mobile-wrap');
-		  if (contentElement) contentElement.classList.add('mobile-content');
-		}
-		
-		function ready(fn) {
-		  if (document.readyState !== 'loading') {
-			fn();
-		  } else {
-			document.addEventListener('DOMContentLoaded', fn);
-		  }
-		}
-		
-		ready(function() {
-		  expandApp();
-		  
-		  onEvent('viewportChanged', function(event) {
-			if (!event.isStateStable) {
-			  expandApp();
-			}
-		  });
-		});
-	  })();
-	</script>
-	<script type="module">
-	  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-	  import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-analytics.js";
-	  // https://firebase.google.com/docs/web/setup#available-libraries
-
-	  const firebaseConfig = {
-		apiKey: "AIzaSyAloGQbkklUTJGEx-aLVLQQXn42OwNbJtA",
-		authDomain: "imposter-sort-web.firebaseapp.com",
-		projectId: "imposter-sort-web",
-		storageBucket: "imposter-sort-web.firebasestorage.app",
-		messagingSenderId: "161366118941",
-		appId: "1:161366118941:web:232e82717ac6f4a6f8acf4",
-		measurementId: "G-2KCVPK2JF9"
-	  };
-
-	  // Initialize Firebase
-	  const app = initializeApp(firebaseConfig);
-	  const analytics = getAnalytics(app);
-	  
-	</script>
   </body>
 </html>
