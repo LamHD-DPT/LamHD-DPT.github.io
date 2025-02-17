@@ -3,6 +3,40 @@ window.addEventListener("load", function () {
       navigator.serviceWorker.register("ServiceWorker.js");
     }
   });
+
+  addEventListener("fetch", event => {
+    event.respondWith(handleRequest(event.request));
+  });
+  
+  async function handleRequest(request) {
+    const url = new URL(request.url);
+    
+    // Thay thế URL gốc bằng API bạn muốn proxy
+    const targetUrl = "https://tganalytics.xyz/events" + url.search;
+  
+    // Forward request đến API gốc
+    const modifiedRequest = new Request(targetUrl, {
+      method: request.method,
+      headers: request.headers,
+      body: request.method !== "GET" ? request.body : null,
+    });
+  
+    // Fetch response từ API gốc
+    let response = await fetch(modifiedRequest);
+  
+    // Thêm CORS headers vào response
+    return new Response(response.body, {
+      status: response.status,
+      statusText: response.statusText,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+        "Access-Control-Allow-Headers": "*",
+        "Content-Type": response.headers.get("Content-Type")
+      }
+    });
+  }
+  
   var unityInstanceRef;
   var unsubscribe;
   var container = document.querySelector("#unity-container");
@@ -38,9 +72,9 @@ window.addEventListener("load", function () {
   var buildUrl = "Build";
   var loaderUrl = buildUrl + "/LamHD-DPT.github.io.loader.js?v=1.0.0";
   var config = {
-    dataUrl: buildUrl + "/LamHD-DPT.github.io.data.unityweb?v=1.0.0",
-    frameworkUrl: buildUrl + "/LamHD-DPT.github.io.framework.js.unityweb?v=1.0.0",
-    codeUrl: buildUrl + "/LamHD-DPT.github.io.wasm.unityweb?v=1.0.0",
+    dataUrl: buildUrl + "/LamHD-DPT.github.io.data.gz?v=1.0.0",
+    frameworkUrl: buildUrl + "/LamHD-DPT.github.io.framework.js.gz?v=1.0.0",
+    codeUrl: buildUrl + "/LamHD-DPT.github.io.wasm.gz?v=1.0.0",
     streamingAssetsUrl: "StreamingAssets",
     companyName: "echelonstudios",
     productName: "Imposter Red Alert",

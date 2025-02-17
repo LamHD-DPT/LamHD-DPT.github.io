@@ -1,9 +1,9 @@
 const cacheName = "echelonstudios-Imposter Red Alert-1.0.0";
 const contentToCache = [
     "Build/LamHD-DPT.github.io.loader.js?v=1.0.0",
-    "Build/LamHD-DPT.github.io.framework.js.unityweb?v=1.0.0",
-    "Build/LamHD-DPT.github.io.data.unityweb?v=1.0.0",
-    "Build/LamHD-DPT.github.io.wasm.unityweb?v=1.0.0",
+    "Build/LamHD-DPT.github.io.framework.js.gz?v=1.0.0",
+    "Build/LamHD-DPT.github.io.data.gz?v=1.0.0",
+    "Build/LamHD-DPT.github.io.wasm.gz?v=1.0.0",
     "TemplateData/style.css"
 
 ];
