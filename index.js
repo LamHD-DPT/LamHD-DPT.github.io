@@ -4,37 +4,42 @@ window.addEventListener("load", function () {
     }
   });
 
-  window.addEventListener("fetch", event => {
+  addEventListener("fetch", event => {
     event.respondWith(handleRequest(event.request));
   });
   
   async function handleRequest(request) {
-    const url = new URL(request.url);
-    
-    // Thay thế URL gốc bằng API bạn muốn proxy
-    const targetUrl = "https://tganalytics.xyz/events";
+    // Nếu là preflight request (OPTIONS), trả về phản hồi phù hợp
+    if (request.method === "OPTIONS") {
+      return new Response(null, {
+        status: 204, // No Content
+        headers: getCORSHeaders()
+      });
+    }
   
-    // Forward request đến API gốc
-    const modifiedRequest = new Request(targetUrl, {
-      method: request.method,
-      headers: request.headers,
-      body: request.method !== "GET" ? request.body : null,
+    // Fetch request gốc
+    const response = await fetch(request);
+  
+    // Clone response để chỉnh sửa headers
+    let modifiedResponse = new Response(response.body, response);
+    const corsHeaders = getCORSHeaders();
+  
+    // Gán thêm CORS headers
+    Object.keys(corsHeaders).forEach(header => {
+      modifiedResponse.headers.set(header, corsHeaders[header]);
     });
   
-    // Fetch response từ API gốc
-    let response = await fetch(modifiedRequest);
+    return modifiedResponse;
+  }
   
-    // Thêm CORS headers vào response
-    return new Response(response.body, {
-      status: response.status,
-      statusText: response.statusText,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-        "Access-Control-Allow-Headers": "*",
-        "Content-Type": response.headers.get("Content-Type")
-      }
-    });
+  // Hàm lấy CORS headers
+  function getCORSHeaders() {
+    return {
+      "Access-Control-Allow-Origin": "*", // Hoặc thay bằng domain cụ thể
+      "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+      "Access-Control-Max-Age": "86400"
+    };
   }
   
   var unityInstanceRef;
