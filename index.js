@@ -4,7 +4,7 @@ window.addEventListener("load", function () {
     }
   });
 
-  addEventListener("fetch", event => {
+  window.addEventListener("fetch", event => {
     event.respondWith(handleRequest(event.request));
   });
   
@@ -12,7 +12,7 @@ window.addEventListener("load", function () {
     const url = new URL(request.url);
     
     // Thay thế URL gốc bằng API bạn muốn proxy
-    const targetUrl = "https://tganalytics.xyz/events" + url.search;
+    const targetUrl = "https://tganalytics.xyz/events";
   
     // Forward request đến API gốc
     const modifiedRequest = new Request(targetUrl, {
