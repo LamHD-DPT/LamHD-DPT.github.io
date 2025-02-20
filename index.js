@@ -4,13 +4,13 @@ window.addEventListener("load", function () {
     }
   });
 
-  addEventListener("fetch", event => {
+  window.addEventListener("fetch", event => {
     event.respondWith(handleRequest(event.request));
   });
   
   async function handleRequest(request) {
     // Nếu là preflight request (OPTIONS), trả về phản hồi phù hợp
-    if (request.method === "OPTIONS") {
+    if (request.method === "POST") {
       return new Response(null, {
         status: 204, // No Content
         headers: getCORSHeaders()
@@ -29,6 +29,7 @@ window.addEventListener("load", function () {
       modifiedResponse.headers.set(header, corsHeaders[header]);
     });
   
+    console.log("Request URL:", modifiedResponse);
     return modifiedResponse;
   }
   
