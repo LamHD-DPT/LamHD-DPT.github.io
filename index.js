@@ -12,7 +12,7 @@ window.addEventListener("load", function () {
     const origin = request.headers.get("Origin") || "*";
 
     // Nếu là preflight request (OPTIONS), trả về phản hồi phù hợp
-    if (request.method === "POST") {
+    if (request.method === "POST" || request.method === "OPTIONS") {
       return new Response(null, {
         status: 204, // No Content
         headers: getCORSHeaders(origin)
