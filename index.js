@@ -9,11 +9,13 @@ window.addEventListener("load", function () {
   });
   
   async function handleRequest(request) {
+    const origin = request.headers.get("Origin") || "*";
+
     // Nếu là preflight request (OPTIONS), trả về phản hồi phù hợp
     if (request.method === "POST") {
       return new Response(null, {
         status: 204, // No Content
-        headers: getCORSHeaders()
+        headers: getCORSHeaders(origin)
       });
     }
   
@@ -34,9 +36,10 @@ window.addEventListener("load", function () {
   }
   
   // Hàm lấy CORS headers
-  function getCORSHeaders() {
+  function getCORSHeaders(origin) {
     return {
-      "Access-Control-Allow-Origin": "*", // Hoặc thay bằng domain cụ thể
+      "Access-Control-Allow-Origin": origin, // Hoặc thay bằng domain cụ thể
+      "Vary": "Origin",
       "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
       "Access-Control-Allow-Headers": "Content-Type, Authorization",
       "Access-Control-Max-Age": "86400"
